@@ -1,0 +1,15 @@
+{
+  "name": "district",
+  "version": "1.0.0",
+  "description": "行政区划代码抓取模块",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run index.js"
+  },
+  "author": "zhf",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "request": "^2.83.0"
+  }
+}
