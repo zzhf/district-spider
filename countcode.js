@@ -54,80 +54,80 @@ const spider = {
     getCityData($, cityUrl) {
         let $city = $('.citytr');
         if (this.cityItem >= $city.length) {
-            this.getProviceData
+            // this.getProviceData
         }
     },
 
     getProviceData($, lastUrl) {
         let $provice = $('.provincetr>td>a');
-        if (this.proviceItem >= $provice.length) {
-            return;
-        }
-        let $e = $($provice[this.proviceItem]);
-        let proviceName = $e.text();
-        let url = lastUrl.substring(0, lastUrl.lastIndexOf('\/') + 1) + $e.attr('href');
-        let writeStream = fs.createWriteStream(filePath+proviceName + ".json");
-        Ajax.get(url, ($) => {
-            let citys = $('.citytr');
-            citys.each((i, e) => {
-                let $e = $(e);
-                let code = $e.find('td:first-child a').text();
-                let name = $e.find('td:last-child a').text();
-                let cityUrl =  url.substring(0, url.lastIndexOf('\/') + 1) + $e.find('td:first-child a').attr('href');
-                if (writeStream) {
-                    writeStream.write(JSON.stringify({
-                        name: name,
-                        statcode: code
-                    }) + '\n');
-                }
-                Ajax.get(cityUrl, ($) => {
-                    $('.countytr').each((i, e) => {
-                        let $e = $(e);
-                        let code = $e.find('td:first-child a').text();
-                        let name = $e.find('td:last-child a').text();
-                        let countyUrl = cityUrl.substring(0, cityUrl.lastIndexOf('\/') + 1) + $e.find('td:first-child a').attr('href');
-                        if (!code && !name) {
-                            code = $e.find('td:first-child').text();
-                            name = $e.find('td:last-child').text();
-                            countyUrl = null;
-                        }
+        $provice.each((i, e) => {
+            let $e = $(e);
+            let proviceName = $e.text();
+            let url = lastUrl.substring(0, lastUrl.lastIndexOf('\/') + 1) + $e.attr('href');
+            let writeStream = fs.createWriteStream(filePath+proviceName + ".json");
+            Ajax.get(url, ($) => {
+                let citys = $('.citytr');
+                citys.each((i, e) => {
+                    let $e = $(e);
+                    let code = $e.find('td:first-child a').text();
+                    let name = $e.find('td:last-child a').text();
+                    let cityUrl =  url.substring(0, url.lastIndexOf('\/') + 1) + $e.find('td:first-child a').attr('href');
+                    if (writeStream) {
                         writeStream.write(JSON.stringify({
                             name: name,
                             statcode: code
                         }) + '\n');
-                        if (countyUrl) {
-                            Ajax.get(countyUrl, ($) => {
-                                $('.towntr').each((i, e) => {
-                                    let $e = $(e);
-                                    let code = $e.find('td:first-child a').text();
-                                    let name = $e.find('td:last-child a').text();
-                                    let townUrl = countyUrl.substring(0, countyUrl.lastIndexOf('\/') + 1) + $e.find('td:first-child a').attr('href');
-                                    writeStream.write(JSON.stringify({
-                                        name: name,
-                                        statcode: code
-                                    }) + '\n');
-                                    Ajax.get(townUrl, ($) => {
-                                        $('.villagetr').each((i, e) => {
-                                            let $e = $(e);
-                                            let statCode = $($e.find('td')[0]).text();
-                                            let countryCode = $($e.find('td')[1]).text();
-                                            let name = $($e.find('td')[2]).text();
-                                            writeStream.write(JSON.stringify({
-                                                statCode: statCode,
-                                                name: name,
-                                                countryCode: countryCode
-                                            }) + '\n');
+                    }
+                    Ajax.get(cityUrl, ($) => {
+                        $('.countytr').each((i, e) => {
+                            let $e = $(e);
+                            let code = $e.find('td:first-child a').text();
+                            let name = $e.find('td:last-child a').text();
+                            let countyUrl = cityUrl.substring(0, cityUrl.lastIndexOf('\/') + 1) + $e.find('td:first-child a').attr('href');
+                            if (!code && !name) {
+                                code = $e.find('td:first-child').text();
+                                name = $e.find('td:last-child').text();
+                                countyUrl = null;
+                            }
+                            writeStream.write(JSON.stringify({
+                                name: name,
+                                statcode: code
+                            }) + '\n');
+                            if (countyUrl) {
+                                Ajax.get(countyUrl, ($) => {
+                                    $('.towntr').each((i, e) => {
+                                        let $e = $(e);
+                                        let code = $e.find('td:first-child a').text();
+                                        let name = $e.find('td:last-child a').text();
+                                        let townUrl = countyUrl.substring(0, countyUrl.lastIndexOf('\/') + 1) + $e.find('td:first-child a').attr('href');
+                                        writeStream.write(JSON.stringify({
+                                            name: name,
+                                            statcode: code
+                                        }) + '\n');
+                                        Ajax.get(townUrl, ($) => {
+                                            $('.villagetr').each((i, e) => {
+                                                let $e = $(e);
+                                                let statCode = $($e.find('td')[0]).text();
+                                                let countryCode = $($e.find('td')[1]).text();
+                                                let name = $($e.find('td')[2]).text();
+                                                writeStream.write(JSON.stringify({
+                                                    statCode: statCode,
+                                                    name: name,
+                                                    countryCode: countryCode
+                                                }) + '\n');
+                                            })
                                         })
                                     })
                                 })
-                            })
-                        }
+                            }
+                        })
                     })
                 })
+                // this.proviceItem ++;
+                // this.getProviceData($, lastUrl);
             })
-            this.proviceItem ++;
-            this.getProviceData($, lastUrl);
         })
+        
     },
 
 
